@@ -5,8 +5,10 @@
 //  Created by Evgeniy Polyak on 16.06.2026.
 //
 import Foundation
+import SwiftData
 
-struct Friend: Identifiable, Equatable {
+@Model
+class Friend: Identifiable, Equatable {
     var id: UUID
     var name: String
     var birthday: Date
@@ -16,6 +18,10 @@ struct Friend: Identifiable, Equatable {
         self.id = id
         self.name = name
         self.birthday = birthday
+    }
+    
+    var isBirthdayToday: Bool {
+        Calendar.current.isDateInToday(self.birthday)
     }
     
     static func == (left: Friend, right: Friend) -> Bool {
