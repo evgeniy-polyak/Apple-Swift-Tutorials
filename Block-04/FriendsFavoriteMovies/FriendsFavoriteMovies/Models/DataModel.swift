@@ -10,6 +10,11 @@ import Foundation
 @Model
 class Friend {
     var name: String
+    var favoriteMovie: Movie?
+    
+    var title: String {
+        favoriteMovie == nil ? name: "\(name) - \(favoriteMovie!.title)"
+    }
     
     init(_ name: String) {
         self.name = name
@@ -21,6 +26,7 @@ class Friend {
 @Model
 class Movie {
     var title: String
+    var favoritedBy: [Friend] = [Friend]()
     var releaseDate: Date
     
     init(_ title: String, date: Date) {

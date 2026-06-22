@@ -58,9 +58,18 @@ class SampleData {
     }
 
     private func insertSampleData() {
-        for friend in SampleData.sampleFriendData {
+        let movieCount = SampleData.sampleMovieData.count
+        let friendCount = SampleData.sampleFriendData.count
+        
+        
+        for index in 0..<friendCount {
+            let friend = SampleData.sampleFriendData[index]
+            let movie = SampleData.sampleMovieData[index]
+            
+            friend.favoriteMovie = movie
             context.insert(friend)
         }
+        
         for movie in SampleData.sampleMovieData {
             context.insert(movie)
         }

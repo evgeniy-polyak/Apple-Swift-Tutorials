@@ -17,7 +17,7 @@ struct FriendListView: View {
         NavigationSplitView {
             List {
                 ForEach(friends) { friend in
-                    NavigationLink(friend.name) {
+                    NavigationLink(friend.title) {
                         FriendDetailView(friend: friend)
                     }
                 }
