@@ -15,8 +15,17 @@ struct MovieListView: View {
     var body: some View {
         NavigationSplitView {
             List(movies) { movie in
-                Text(movie.title)
+                NavigationLink(movie.title) {
+                    Text("Detail for - \(movie.title)")
+                        .navigationTitle(movie.title)
+                        .navigationBarTitleDisplayMode(.inline)
+                }
             }
+            .navigationTitle("Movies")
+        } detail: {
+            Text("Select a movie")
+                .navigationTitle("Movie")
+                .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
