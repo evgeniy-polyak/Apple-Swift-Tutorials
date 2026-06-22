@@ -9,7 +9,7 @@ import SwiftData
 
 @MainActor
 class SampleData {
-    static let schared = SampleData()
+    static let shared = SampleData()
 
     static private let sampleFriendData = [
         Friend("Евгений"),
@@ -30,6 +30,14 @@ class SampleData {
 
     var context: ModelContext {
         self.modelContainer.mainContext
+    }
+    
+    var friend: Friend {
+        SampleData.sampleFriendData.first!
+    }
+    
+    var movie: Movie {
+        SampleData.sampleMovieData.first!
     }
 
     private init() {

@@ -23,5 +23,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(SampleData.schared.modelContainer)
+        .modelContainer(SampleData.shared.modelContainer)
 }

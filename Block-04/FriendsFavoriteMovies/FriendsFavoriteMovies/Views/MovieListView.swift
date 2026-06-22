@@ -11,26 +11,56 @@ import SwiftData
 struct MovieListView: View {
     @Query(sort: \Movie.title) private var movies: [Movie]
     @Environment(\.modelContext) private var context
+    @State private var newMovie: Movie?
     
     var body: some View {
         NavigationSplitView {
-            List(movies) { movie in
-                NavigationLink(movie.title) {
-                    Text("Detail for - \(movie.title)")
-                        .navigationTitle(movie.title)
-                        .navigationBarTitleDisplayMode(.inline)
+            List {
+                ForEach(movies) { movie in
+                    NavigationLink(movie.title) {
+                        MovieDetailView(movie: movie)
+                    }
+                }
+                .onDelete(perform: deleteMovies(indexes:))
+                
+            }
+            .sheet(item: $newMovie, content: { movie in
+                NavigationStack {
+                    MovieDetailView(movie: movie, isNew: true)
+                }
+            })
+            .interactiveDismissDisabled()
+            .navigationTitle("Movies")
+            .toolbar {
+                ToolbarItem {
+                    Button("Add movie", systemImage: "plus", action: addMovie)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    EditButton()
                 }
             }
-            .navigationTitle("Movies")
+            
         } detail: {
             Text("Select a movie")
                 .navigationTitle("Movie")
                 .navigationBarTitleDisplayMode(.inline)
         }
     }
+    
+    private func addMovie() {
+        let newMovie = Movie("New Movie", date: .now)
+//        context.insert(newMovie)
+        self.newMovie = newMovie
+    }
+    
+    private func deleteMovies(indexes: IndexSet) {
+        for index in indexes {
+            context.delete(movies[index])
+        }
+    }
 }
 
 #Preview {
     MovieListView()
-        .modelContainer(SampleData.schared.modelContainer)
+        .modelContainer(SampleData.shared.modelContainer)
 }
