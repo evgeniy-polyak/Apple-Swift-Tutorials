@@ -5,54 +5,59 @@
 //  Created by Evgeniy Polyak on 19.06.2026.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct MovieListView: View {
-    @Query(sort: \Movie.title) private var movies: [Movie]
+    @Query private var movies: [Movie]
     @Environment(\.modelContext) private var context
     @State private var newMovie: Movie?
-    
+
+    init(titleFilter: String = "") {
+        let predicate = #Predicate<Movie> { movie in
+            titleFilter.isEmpty || movie.title.localizedStandardContains(titleFilter)
+        }
+
+        _movies = Query(filter: predicate, sort: \Movie.title)
+    }
+
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(movies) { movie in
-                    NavigationLink(movie.title) {
-                        MovieDetailView(movie: movie)
-                    }
+        List {
+            ForEach(movies) { movie in
+                NavigationLink(movie.title) {
+                    MovieDetailView(movie: movie)
                 }
-                .onDelete(perform: deleteMovies(indexes:))
-                
             }
-            .sheet(item: $newMovie, content: { movie in
+            .onDelete(perform: deleteMovies(indexes:))
+
+        }
+        .sheet(
+            item: $newMovie,
+            content: { movie in
                 NavigationStack {
                     MovieDetailView(movie: movie, isNew: true)
                 }
-            })
-            .interactiveDismissDisabled()
-            .navigationTitle("Movies")
-            .toolbar {
-                ToolbarItem {
-                    Button("Add movie", systemImage: "plus", action: addMovie)
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    EditButton()
-                }
             }
-            
-        } detail: {
-            Text("Select a movie")
-                .navigationTitle("Movie")
-                .navigationBarTitleDisplayMode(.inline)
+        )
+        .interactiveDismissDisabled()
+        .navigationTitle("Movies")
+        .toolbar {
+            ToolbarItem {
+                Button("Add movie", systemImage: "plus", action: addMovie)
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                EditButton()
+            }
         }
+
     }
-    
+
     private func addMovie() {
         let newMovie = Movie("New Movie", date: .now)
-//        context.insert(newMovie)
+        //        context.insert(newMovie)
         self.newMovie = newMovie
     }
-    
+
     private func deleteMovies(indexes: IndexSet) {
         for index in indexes {
             context.delete(movies[index])
@@ -61,6 +66,15 @@ struct MovieListView: View {
 }
 
 #Preview {
-    MovieListView()
-        .modelContainer(SampleData.shared.modelContainer)
+    NavigationStack {
+        MovieListView()
+            .modelContainer(SampleData.shared.modelContainer)
+    }
+}
+
+#Preview("Filtering") {
+    NavigationStack {
+        MovieListView(titleFilter: "tr")
+            .modelContainer(SampleData.shared.modelContainer)
+    }
 }
