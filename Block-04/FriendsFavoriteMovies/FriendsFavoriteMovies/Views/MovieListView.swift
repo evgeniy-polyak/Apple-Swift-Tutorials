@@ -22,24 +22,21 @@ struct MovieListView: View {
     }
 
     var body: some View {
-        List {
-            ForEach(movies) { movie in
-                NavigationLink(movie.title) {
-                    MovieDetailView(movie: movie)
+        Group {
+            if !movies.isEmpty {
+                List {
+                    ForEach(movies) { movie in
+                        NavigationLink(movie.title) {
+                            MovieDetailView(movie: movie)
+                        }
+                    }
+                    .onDelete(perform: deleteMovies(indexes:))
+                    
                 }
+            } else {
+                ContentUnavailableView("Add movies", systemImage: "film.stack")
             }
-            .onDelete(perform: deleteMovies(indexes:))
-
         }
-        .sheet(
-            item: $newMovie,
-            content: { movie in
-                NavigationStack {
-                    MovieDetailView(movie: movie, isNew: true)
-                }
-            }
-        )
-        .interactiveDismissDisabled()
         .navigationTitle("Movies")
         .toolbar {
             ToolbarItem {
@@ -49,6 +46,15 @@ struct MovieListView: View {
                 EditButton()
             }
         }
+        .sheet(
+            item: $newMovie,
+            content: { movie in
+                NavigationStack {
+                    MovieDetailView(movie: movie, isNew: true)
+                }
+            }
+        )
+        
 
     }
 
@@ -76,5 +82,12 @@ struct MovieListView: View {
     NavigationStack {
         MovieListView(titleFilter: "tr")
             .modelContainer(SampleData.shared.modelContainer)
+    }
+}
+
+#Preview("Empty list") {
+    NavigationStack {
+        MovieListView(titleFilter: "tr")
+            .modelContainer(for: Movie.self, inMemory: true)
     }
 }
